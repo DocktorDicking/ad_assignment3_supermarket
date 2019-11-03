@@ -9,6 +9,9 @@ import javax.xml.stream.XMLStreamConstants;
 import java.time.LocalTime;
 import java.util.*;
 
+import static java.util.Map.Entry.comparingByKey;
+import static java.util.stream.Collectors.toMap;
+
 public class Supermarket {
     public String name;                 // name of the case for reporting purposes
     private Set<Product> products;      // a set of products that is being sold in the supermarket
@@ -49,11 +52,17 @@ public class Supermarket {
         System.out.printf("%d customers have shopped %d items out of %d different products\n",
                 this.customers.size(), this.getTotalNumberOfItems(), this.products.size());
 
-        System.out.printf("Revenues and most bought product per zip-code:");
+        System.out.printf("Revenues and most bought product per zip-code:\n");
         Map<String, Double> revenues = this.revenueByZipCode();
         Map<String, Product> populars = this.mostBoughtProductByZipCode();
 
         double totalRevenue = 0.0;
+        for (Map.Entry<String, Double> entry : revenues.entrySet()) {
+            if (populars.containsKey(entry.getKey())) {
+                Product product = populars.get(entry.getKey());
+                System.out.printf("\t%s: %.2f (%s),", entry.getKey(), entry.getValue(), product.getDescription());
+            }
+        }
         // TODO: display the calculated revenues and most bought products.
         // TODO: calculate the total revenue.
 
@@ -87,27 +96,121 @@ public class Supermarket {
      * @return
      */
     public Map<String, Double> revenueByZipCode() {
-        Map<String, Double> revenues = null;
+        Map<String, Double> revenues = new HashMap<>();
 
         // TODO create an appropriate data structure for the revenues
         //  and calculate its contents
+        for (Customer c: this.customers) {
+            for (Purchase p : c.getItems()) {
+                if (revenues.containsKey(c.getZipCode())) {
+                    Double currentValue = revenues.get(c.getZipCode());
+                    revenues.put(c.getZipCode(), currentValue + (p.getProduct().getPrice() * p.getAmount()));
+                } else {
+                    revenues.put(c.getZipCode(), p.getProduct().getPrice() * p.getAmount());
+                }
+            }
 
-        return revenues;
+            if (c.getItems().size() == 0) {
+                revenues.put(c.getZipCode(), 0.00);
+            }
+        }
+            return revenues;
     }
 
     /**
      * (DIFFICULT!!!)
      * calculates a map of most bought products per zip code that is also ordered by zip code
      * if multiple products have the same maximum count, just pick one.
-     * @return
+     * @return Map
      */
     public Map<String, Product> mostBoughtProductByZipCode() {
-        Map<String, Product> mostBought = null;
+        Map<String, Product> mostBought = new HashMap<>();
 
         // TODO create an appropriate data structure for the mostBought
         //  and calculate its contents
 
-        return mostBought;
+        //We made an structure as following: {"zipcode" => {0 => { "product description" => amount} }}
+        // Example:
+        // { 1013MF =>
+        //  { 1 => { Croissant => 2 },
+        //    2 => { Douwe Egberts snelfilter 500g => 1 }
+        //  }
+        // }
+
+        // This is the outermap of the datastructure containing the zipcode as key value
+        HashMap<String, HashMap<Integer, HashMap<Product, Integer>>> outerMap = new HashMap<>();
+        // Count is used as index value for the products
+        int count = 0;
+
+        // Loop through customers
+        for (Customer c: this.customers) {
+            // Loop through bought items of customers
+            for (Purchase p: c.getItems()) {
+                count++;
+                // initialize the variables for the data structure
+                HashMap<Product, Integer> tweedeMap = new HashMap<>();
+                HashMap<Integer, HashMap<Product, Integer>> eersteMap = new HashMap<>();
+                tweedeMap.put(p.getProduct(), p.getAmount());
+                eersteMap.put(count, tweedeMap);
+
+
+                if(outerMap.containsKey(c.getZipCode())) {
+                    boolean productExists = false;
+                    int productKey = 0;
+                    int amount = 0;
+
+                    //Loop through dataset to check if product already exists
+                    for (Map.Entry<Integer, HashMap<Product, Integer>> eersteTest: outerMap.get(c.getZipCode()).entrySet()) {
+                        for (Map.Entry<Product, Integer> tweedeTest: eersteTest.getValue().entrySet()) {
+                            if(p.getProduct().getDescription() == tweedeTest.getKey().getDescription()) {
+                                productExists = true;
+                                productKey = eersteTest.getKey();
+                                amount = tweedeTest.getValue();
+                            }
+                        }
+                    }
+
+                    // If the product exists, increment the amount. If the product doesn't exists add it to the collection
+                    if(productExists) {
+                        outerMap.get(c.getZipCode()).get(productKey).put(p.getProduct(), p.getAmount() + amount);
+                    } else {
+                        outerMap.get(c.getZipCode()).put(count, tweedeMap);
+                    }
+
+                } else {
+                    // This will add a new zipcode with the bought item
+                    outerMap.put(c.getZipCode(), eersteMap);
+                }
+            }
+        }
+
+        //This will loop through all items and calculates the most bought item
+        for (Map.Entry<String, HashMap<Integer, HashMap<Product, Integer>>> outer: outerMap.entrySet()) {
+            Product highestAmountProduct = null;
+            String key = outer.getKey();
+            Integer amount = 0;
+
+            for (Map.Entry<Integer, HashMap<Product, Integer>> innermap: outer.getValue().entrySet())
+            {
+                for(Map.Entry<Product, Integer> innerinner: innermap.getValue().entrySet())
+                {
+                    if(highestAmountProduct == null) {
+                        highestAmountProduct = innerinner.getKey();
+                        amount = innerinner.getValue();
+                        mostBought.put(key, highestAmountProduct);
+                    } else if(innerinner.getValue() > amount) {
+                        highestAmountProduct = innerinner.getKey();
+                        amount = innerinner.getValue();
+                        mostBought.put(key, highestAmountProduct);
+                    }
+                }
+            }
+        }
+
+        //Copied from internet https://javarevisited.blogspot.com/2017/07/how-to-sort-map-by-keys-in-java-8.html
+        Map<String, Product> sorted = mostBought.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByKey())).collect( toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+
+        return sorted;
     }
 
     /**
@@ -191,6 +294,7 @@ public class Supermarket {
     public static Supermarket importFromXML(String resourceName) {
         XMLParser xmlParser = new XMLParser(resourceName);
 
+
         try {
             xmlParser.nextTag();
             xmlParser.require(XMLStreamConstants.START_ELEMENT, null, "supermarket");
@@ -200,6 +304,8 @@ public class Supermarket {
 
             Supermarket supermarket = new Supermarket(resourceName, openTime, closingTime);
 
+            supermarket.products = new HashSet<>();
+            supermarket.customers = new ArrayList<>();
             Product.importProductsFromXML(xmlParser, supermarket.products);
             Customer.importCustomersFromXML(xmlParser, supermarket.customers, supermarket.products);
 

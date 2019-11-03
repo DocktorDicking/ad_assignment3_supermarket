@@ -3,8 +3,7 @@ public class SupermarketSmall {
 
         // load the simulation configuration with open and closing times
         // and a small set of 5 products and customers
-        Supermarket supermarket =
-                Supermarket.importFromXML("jambi5.xml");
+        Supermarket supermarket = Supermarket.importFromXML("jambi5.xml");
         supermarket.printCustomerStatistics();
 
         // configure the cashiers for a test scenario
