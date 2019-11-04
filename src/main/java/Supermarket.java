@@ -9,7 +9,6 @@ import javax.xml.stream.XMLStreamConstants;
 import java.time.LocalTime;
 import java.util.*;
 
-import static java.util.Map.Entry.comparingByKey;
 import static java.util.stream.Collectors.toMap;
 
 public class Supermarket {
@@ -71,9 +70,6 @@ public class Supermarket {
                 }
             }
         }
-        // TODO: display the calculated revenues and most bought products.
-        // TODO: calculate the total revenue.
-
         System.out.printf("\nTotal Revenue = %.2f\n", totalRevenue);
     }
 
@@ -84,6 +80,15 @@ public class Supermarket {
 
         System.out.printf("\nSimulation scenario results:\n");
         System.out.printf("Cashiers:     n-customers:  avg-wait-time: max-wait-time: max-queue-length: avg-check-out-time: idle-time:\n");
+
+        for (Cashier c : this.cashiers) {
+            double totalCheckoutTime = 0.0;
+            for (Customer customer : this.customers) {
+                totalCheckoutTime = totalCheckoutTime + c.expectedCheckOutTime(customer.getNumberOfItems());
+            }
+            System.out.printf("%s          %s           %s          %s            %s               %s              %s", c.getName(), c.getTotalCustomers(), c.getAverageWaitingTime(), c.getMaxWaitingTime(), c.getMaxQueueLength(),  (totalCheckoutTime / this.customers.size()), c.getTotalIdleTime());
+        }
+
         // TODO: report simulation results per cashier:
         //  a) number of customers
         //  b) average waiting time per customer
