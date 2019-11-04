@@ -26,14 +26,15 @@ public class Supermarket {
         this.setOpenTime(openTime);
         this.setClosingTime(closingTime);
         this.cashiers = new ArrayList<>();
-        // TODO create empty data structures for products and customers
     }
 
     public int getTotalNumberOfItems() {
         int totalItems = 0;
-
-        // TODO: calculate the total number of shopped items
-
+        for (Customer c: this.customers) {
+            for (Purchase p: c.getItems()) {
+                totalItems += p.getAmount();
+            }
+        }
         return totalItems;
     }
 
@@ -57,16 +58,23 @@ public class Supermarket {
         Map<String, Product> populars = this.mostBoughtProductByZipCode();
 
         double totalRevenue = 0.0;
+        int count = 0;
         for (Map.Entry<String, Double> entry : revenues.entrySet()) {
             if (populars.containsKey(entry.getKey())) {
+                count++;
                 Product product = populars.get(entry.getKey());
+                totalRevenue = totalRevenue + entry.getValue();
                 System.out.printf("\t%s: %.2f (%s),", entry.getKey(), entry.getValue(), product.getDescription());
+                if (count == 4) {
+                    System.out.print("\n");
+                    count = 0;
+                }
             }
         }
         // TODO: display the calculated revenues and most bought products.
         // TODO: calculate the total revenue.
 
-        System.out.printf("\nTotal Revenue=%.2f\n", totalRevenue);
+        System.out.printf("\nTotal Revenue = %.2f\n", totalRevenue);
     }
 
     /**
