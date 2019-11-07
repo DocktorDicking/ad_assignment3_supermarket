@@ -29,8 +29,6 @@ public class Customer {
      */
     public int getNumberOfItems() {
         int numItems = 0;
-
-        // TODO: Calculate the total number of items
         for (Purchase s : this.items) {
             numItems += s.getAmount();
         }
@@ -40,8 +38,9 @@ public class Customer {
 
     public double calculateTotalBill() {
         double totalBill = 0.0;
-
-        // TODO: Calculate the total cost of all items
+        for (Purchase p: this.getItems()) {
+            totalBill += p.getProduct().getPrice() * p.getAmount();
+        }
 
         return totalBill;
     }
@@ -56,11 +55,23 @@ public class Customer {
      */
     public Cashier selectCashier(List<Cashier> cashiers) {
         Cashier selectedCashier = null;
+        int selfCheckoutTime = 20 + (this.getNumberOfItems() * 2);
+        int passthroughTime = 0;
 
         if (cashiers.size() == 1) {
             selectedCashier = cashiers.get(0);
-        } else {
+        } else if (cashiers.size() == 0) {
             selectedCashier = null;
+        } else {
+            for (Cashier cashier: cashiers)
+            {
+                int expectedWaitingTime = selfCheckoutTime + cashier.expectedWaitingTime(this);
+                if (passthroughTime < expectedWaitingTime)
+                {
+                    passthroughTime = expectedWaitingTime;
+                    selectedCashier = cashier;
+                }
+            }
 
             // TODO find the cashier with the lowest expected pass-through time.
             //  passthrough time = waiting time + time to check-out my own bought items

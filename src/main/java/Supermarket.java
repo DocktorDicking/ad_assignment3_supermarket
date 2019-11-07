@@ -234,7 +234,7 @@ public class Supermarket {
      * simulate the cashiers while handling all customers that enter their queues
      */
     public void simulateCashiers() {
-        Queue<Customer> shoppingQueue = null;
+        Queue<Customer> shoppingQueue = new LinkedList<>();
 
         // TODO: create an appropriate data structure for the shoppingQueue
         //  and add all customers in the supermarket
@@ -244,14 +244,22 @@ public class Supermarket {
             c.reStart(this.openTime);
         }
 
+        // loop door alle customers en sorteer ze op volgorde
+        ArrayList<Customer> customerList = new ArrayList<>();
+        customerList.addAll(this.customers);
+        Collections.sort(customerList, new SortCustomerByQueuedAt());
+
+        for (Customer customer: customerList) {
+            shoppingQueue.add(customer);
+        }
+
         // poll the customers from the queue one by one
         // and redirect them to the cashier of their choice
 
         // TODO: get the first customer from the shoppingQueue;
-        Customer nextCustomer = null;
+        Customer nextCustomer = shoppingQueue.peek();
 
         while (nextCustomer != null) {
-
             // let all cashiers finish up their work before the given arrival time of the customer
             for (Cashier c : this.cashiers) {
                 c.doTheWorkUntil(nextCustomer.getQueuedAt());
@@ -261,9 +269,11 @@ public class Supermarket {
             // redirect the customer to the selected cashier
             selectedCashier.add(nextCustomer);
 
+            shoppingQueue.remove();
+            nextCustomer = shoppingQueue.peek();
+
             // TODO: next customer is arriving, get the next customer from the shoppingQueue
         }
-
         // all customers have been handled;
         // cashiers finish their work until closing time + some overtime
         final int overtime = 15*60;
