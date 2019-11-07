@@ -56,6 +56,7 @@ public class Supermarket {
         Map<String, Double> revenues = this.revenueByZipCode();
         Map<String, Product> populars = this.mostBoughtProductByZipCode();
 
+        //Print most bought products and calculate total revenue.
         double totalRevenue = 0.0;
         int count = 0;
         for (Map.Entry<String, Double> entry : revenues.entrySet()) {
@@ -78,15 +79,18 @@ public class Supermarket {
      */
     public void printSimulationResults() {
 
-        System.out.printf("\nSimulation scenario results:\n");
-        System.out.printf("Cashiers:     n-customers:  avg-wait-time: max-wait-time: max-queue-length: avg-check-out-time: idle-time:\n");
+        System.out.print("\nSimulation scenario results:\n");
+        System.out.print("Cashiers: \tn-customers: \tavg-wait-time: \tmax-wait-time: \tmax-queue-length: \tavg-check-out-time: \tidle-time:\n");
+        System.out.print("-------------------------------------------------------------------------------------------------------------------\n");
 
         for (Cashier c : this.cashiers) {
             double totalCheckoutTime = 0.0;
             for (Customer customer : this.customers) {
                 totalCheckoutTime = totalCheckoutTime + c.expectedCheckOutTime(customer.getNumberOfItems());
             }
-            System.out.printf("%s          %s           %s          %s            %s               %s              %s", c.getName(), c.getTotalCustomers(), c.getAverageWaitingTime(), c.getMaxWaitingTime(), c.getMaxQueueLength(),  (totalCheckoutTime / this.customers.size()), c.getTotalIdleTime());
+            System.out.printf("%s\t\t\t %s\t\t\t\t %s\t\t\t\t %s\t\t\t\t %s\t\t\t\t %s\t\t\t\t\t %s\n",
+                    c.getName(), c.getTotalCustomers(), c.getAverageWaitingTime(), c.getMaxWaitingTime(),
+                    c.getMaxQueueLength(),  (totalCheckoutTime / this.customers.size()), c.getTotalIdleTime());
         }
 
         // TODO: report simulation results per cashier:
