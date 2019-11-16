@@ -17,7 +17,7 @@ public class PriorityCashier extends Cashier {
         int timePerItem = 2;
         int checkOutTime = 0;
 
-        if (numberOfItems == 0) {
+        if(numberOfItems == 0) {
             return checkOutTime;
         }
 
@@ -34,22 +34,22 @@ public class PriorityCashier extends Cashier {
 
         LinkedList tempQueue = new LinkedList();
 
-        for (int i = 0; i < this.waitingQueue.size(); i++) {
+        for(int i=0; i < this.waitingQueue.size(); i++) {
             Customer currentCustomer = (Customer) this.waitingQueue.get(i);
 
-            if (customer.getNumberOfItems() < currentCustomer.getNumberOfItems() && customer.getNumberOfItems() <= 5 && currentCustomer.getNumberOfItems() >= 6) {
+            if(customer.getNumberOfItems() < currentCustomer.getNumberOfItems()
+                    && customer.getNumberOfItems() <= 5 && currentCustomer.getNumberOfItems() >= 6) {
             } else {
                 tempQueue.add(currentCustomer);
             }
         }
 
-        for (int i = 0; i < tempQueue.size(); i++) {
+        for(int i=0; i < tempQueue.size(); i++) {
             Customer currentCustomer = (Customer) tempQueue.get(i);
-
             waitingTime += fixedTime + (timePerItem * currentCustomer.getNumberOfItems());
         }
 
-        if (this.workingOnCustomer != null) {
+        if(this.workingOnCustomer != null) {
             waitingTime += fixedTime + (timePerItem * this.workingOnCustomer.getNumberOfItems());
         }
 
@@ -61,14 +61,14 @@ public class PriorityCashier extends Cashier {
         LinkedList tempQueue = new LinkedList();
         this.totalCustomers++;
 
-        while (this.waitingQueue.size() > 0) {
+        while(this.waitingQueue.size() > 0) {
             Customer nextCustomer = (Customer) this.waitingQueue.peek();
-            if (nextCustomer.getNumberOfItems() > customer.getNumberOfItems() && customer.getNumberOfItems() > 5) {
+            if(nextCustomer.getNumberOfItems() > customer.getNumberOfItems() && customer.getNumberOfItems() > 5) {
                 tempQueue.add(nextCustomer);
                 this.waitingQueue.remove();
             } else {
                 this.waitingQueue.add(customer);
-                while (tempQueue.size() > 0) {
+                while(tempQueue.size() > 0) {
                     Customer tempCustomer = (Customer) tempQueue.peek();
                     this.waitingQueue.add(tempCustomer);
                     tempQueue.remove();
@@ -76,13 +76,13 @@ public class PriorityCashier extends Cashier {
                 break;
             }
         }
-        if (this.waitingQueue.isEmpty()) {
+        if(this.waitingQueue.isEmpty()) {
             this.waitingQueue.add(customer);
         }
-        if (this.waitingQueue.size() >= this.maxQueueLength) {
-            if (this.workingOnCustomer != null) {
+        if(this.waitingQueue.size() >= this.maxQueueLength) {
+            if(this.workingOnCustomer != null) {
                 this.maxQueueLength = this.waitingQueue.size() + 1;
-            } else {
+            }else {
                 this.maxQueueLength = this.waitingQueue.size();
             }
         }

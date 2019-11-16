@@ -7,6 +7,7 @@ import utils.XMLParser;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Customer {
@@ -32,7 +33,6 @@ public class Customer {
         for (Purchase s : this.items) {
             numItems += s.getAmount();
         }
-
         return numItems;
     }
 
@@ -41,7 +41,6 @@ public class Customer {
         for (Purchase p: this.getItems()) {
             totalBill += p.getProduct().getPrice() * p.getAmount();
         }
-
         return totalBill;
     }
 
@@ -63,11 +62,9 @@ public class Customer {
         } else if (cashiers.size() == 0) {
             selectedCashier = null;
         } else {
-            for (Cashier cashier: cashiers)
-            {
+            for (Cashier cashier: cashiers) {
                 int expectedWaitingTime = selfCheckoutTime + cashier.expectedWaitingTime(this);
-                if (passthroughTime < expectedWaitingTime)
-                {
+                if (passthroughTime < expectedWaitingTime) {
                     passthroughTime = expectedWaitingTime;
                     selectedCashier = cashier;
                 }
@@ -141,7 +138,6 @@ public class Customer {
                     customers.add(customer);
                 }
             }
-
             xmlParser.findAndAcceptEndTag("customers");
             return customers;
         }
@@ -192,4 +188,12 @@ public class Customer {
         }
         xmlWriter.writeEndElement();
     }
+
+    @Override
+    public String toString() {
+        LocalTime localTime = LocalTime.now();
+        DateTimeFormatter timeFormatter1 = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return this.queuedAt.format(timeFormatter1) + " items: " + this.getNumberOfItems();
+    }
+
 }

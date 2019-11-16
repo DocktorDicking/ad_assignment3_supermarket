@@ -100,8 +100,7 @@ public abstract class Cashier {
             }
         }
 
-        while(this.waitingQueue.size() > 0)
-        {
+        while(this.waitingQueue.size() > 0) {
             Customer currentCustomer = (Customer) this.waitingQueue.peek();
             if(currentCustomer.getNumberOfItems() == 0) {
                 this.waitingQueue.remove();
@@ -116,7 +115,7 @@ public abstract class Cashier {
                 this.waitingQueue.remove();
                 this.timeWorked = 0;
 
-            }else {
+            } else {
                 this.timeWorked = elapsed;
                 this.workingOnCustomer = currentCustomer;
                 waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
@@ -124,10 +123,8 @@ public abstract class Cashier {
                 break;
             }
         }
-
         this.setCurrentTime(targetTime);
         this.setTotalIdleTime(this.totalAmountAtWork - this.totalAmountOfWorkTime);
-
     }
 
     /**
@@ -161,7 +158,7 @@ public abstract class Cashier {
     }
 
     public int getMaxWaitingTime() {
-        int maxWaitingTime= 0;
+        int maxWaitingTime = 0;
         for (int waitingTime : this.waitingTimes) {
             if(waitingTime > maxWaitingTime) {
                 maxWaitingTime = waitingTime;

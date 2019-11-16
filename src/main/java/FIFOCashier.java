@@ -29,7 +29,7 @@ public class FIFOCashier extends Cashier {
         int waitingTime = 0;
 
         for(int i=0; i < this.waitingQueue.size(); i++) {
-            Customer currentCustomer = this.waitingQueue.get(i);
+            Customer currentCustomer = (Customer) this.waitingQueue.get(i);
             waitingTime += fixedTime + (timePerItem * currentCustomer.getNumberOfItems());
         }
 
