@@ -8,9 +8,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
-public class Product {
+public class Product implements Comparable<Product>{
     private String code;            // a unique product code; identical codes designate identical products
     private String description;     // the product description, useful for reporting
     private double price;           // the product's price
@@ -23,6 +24,29 @@ public class Product {
 
     // TODO implement relevant overrides and/or local classes to be able to
     //  print Products and/or use them in sets, maps and/or priority queues.
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.code);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+
+        if(obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Product product = (Product) obj;
+        return (product.hashCode() == this.hashCode());
+    }
+
+    @Override
+    public int compareTo(Product product) {
+        return this.hashCode() - product.hashCode();
+    }
 
     public String getCode() {
         return code;
@@ -91,5 +115,10 @@ public class Product {
         xmlWriter.writeAttribute("description", this.description);
         xmlWriter.writeAttribute("price", String.format(Locale.US, "%.2f", this.price));
         xmlWriter.writeEndElement();
+    }
+
+    @Override
+    public String toString() {
+        return this.getDescription();
     }
 }
