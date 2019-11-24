@@ -19,9 +19,8 @@ public class PriorityCashier extends FIFOCashier {
 
         for(int i=0; i < this.waitingQueue.size(); i++) {
             Customer currentCustomer = (Customer) this.waitingQueue.get(i);
-
             if(customer.getNumberOfItems() < currentCustomer.getNumberOfItems()
-                    && customer.getNumberOfItems() <= 5 && currentCustomer.getNumberOfItems() >= 6) {
+                    && customer.getNumberOfItems() <= maxNumPriorityItems && currentCustomer.getNumberOfItems() >= 6) {
             } else {
                 tempQueue.add(currentCustomer);
             }

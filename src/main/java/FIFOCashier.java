@@ -3,10 +3,19 @@ import java.time.temporal.ChronoUnit;
 
 public class FIFOCashier extends Cashier {
 
+    /**
+     * Default constructor.
+     * @param name String
+     */
     public FIFOCashier(String name) {
         super(name);
     }
 
+    /**
+     * Calculates the expected time needed to checkout based on the number of items.
+     * @param numberOfItems Int
+     * @return checkOutTime Int
+     */
     @Override
     public int expectedCheckOutTime(int numberOfItems) {
         int fixedTime = 20;
@@ -16,12 +25,15 @@ public class FIFOCashier extends Cashier {
         if(numberOfItems == 0) {
             return checkOutTime;
         }
-
         checkOutTime = fixedTime + (timePerItem * numberOfItems);
-
         return checkOutTime;
     }
 
+    /**
+     * Calculates expected waiting time (to the cashier) for a customer.
+     * @param customer Customer
+     * @return
+     */
     @Override
     public int expectedWaitingTime(Customer customer) {
         final int START_TIME = 20;
@@ -29,7 +41,7 @@ public class FIFOCashier extends Cashier {
         int totalTime = 0;
 
         for(int i=0; i < this.waitingQueue.size(); i++) {
-            Customer currentCustomer = (Customer) this.waitingQueue.get(i);
+            Customer currentCustomer = this.waitingQueue.get(i);
             totalTime += START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
         }
 

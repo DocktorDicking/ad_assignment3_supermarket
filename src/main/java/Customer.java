@@ -11,12 +11,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Customer {
-    private LocalTime queuedAt;      // time of arrival at cashier
-    private String zipCode;          // zip-code of the customer
-    private Set<Purchase> items;     // items procured by customer
-    private int actualWaitingTime;   // actual waiting time in seconds before check-out
-    private int actualCheckOutTime;  // actual check-out time at cashier in seconds
-    private Cashier checkOutCashier; // cashier that the customer has chosen for check-out
+    private LocalTime queuedAt;      //time of arrival at cashier
+    private String zipCode;          //zip-code of the customer
+    private Set<Purchase> items;     //items procured by customer
+    private int actualWaitingTime;   //actual waiting time in seconds before check-out
+    private int actualCheckOutTime;  //actual check-out time at cashier in seconds
+    private Cashier checkOutCashier; //cashier that the customer has chosen for check-out
 
     public Customer(LocalTime queuedAt, String zipCode) {
         this.queuedAt = queuedAt;
