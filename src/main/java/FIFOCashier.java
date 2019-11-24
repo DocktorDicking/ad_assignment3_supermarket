@@ -33,10 +33,71 @@ public class FIFOCashier extends Cashier {
             totalTime += START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
         }
 
-        if(this.workingOnCustomer != null) {
-            totalTime += START_TIME + (ITEM_TIME * this.workingOnCustomer.getNumberOfItems());
+        if(this.currentCustomer != null) {
+            totalTime += START_TIME + (ITEM_TIME * this.currentCustomer.getNumberOfItems());
         }
 
         return totalTime - this.timeWorked;
+    }
+
+    /** TODO: Rewrite this docu.
+     * proceed the cashier's work until the given targetTime has been reached
+     * this work may involve:
+     * a) continuing or finishing the current customer(s) begin served
+     * b) serving new customers that are waiting on the queue
+     * c) sitting idle, taking a break until time has reached targetTime,
+     *      after which new customers may arrive.
+     * @param targetTime LocalTime
+     */
+    @Override
+    public void doTheWorkUntil(LocalTime targetTime) {
+        final int START_TIME = 20;
+        final int ITEM_TIME = 2;
+        int elapsed = (int) ChronoUnit.SECONDS.between(this.getCurrentTime(), targetTime);
+        this.totalAmountAtWork += elapsed;
+
+        /*
+        Check if cashier works on a currentCustomer.
+        If elapsed time is smaller then totalCustomerTime, set time worked and currentTime to elapsed time, return.
+        If elapsed time is bigger then totalCustomerTime,
+         */
+        if(this.currentCustomer != null) {
+            int totalCustomerTime = START_TIME + (ITEM_TIME * this.currentCustomer.getNumberOfItems());
+            if (elapsed < totalCustomerTime) {
+                this.timeWorked += elapsed;
+                this.setCurrentTime(targetTime);
+                return;
+            }
+
+            elapsed = elapsed - totalCustomerTime;
+            this.totalAmountOfWorkTime += totalCustomerTime;
+            this.currentCustomer = null;
+            this.timeWorked = 0;
+        }
+
+
+        while(this.waitingQueue.size() > 0) {
+            Customer currentCustomer = this.waitingQueue.peek();
+            if(currentCustomer.getNumberOfItems() == 0) {
+                this.waitingQueue.remove();
+            }
+
+            int totalCustomerTime = START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
+            if(elapsed > totalCustomerTime) {
+                elapsed = elapsed - totalCustomerTime;
+                this.totalAmountOfWorkTime += totalCustomerTime;
+                waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
+                this.waitingQueue.remove();
+                this.timeWorked = 0;
+            } else {
+                this.timeWorked = elapsed;
+                this.currentCustomer = currentCustomer;
+                waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
+                this.waitingQueue.remove();
+                break;
+            }
+        }
+        this.setCurrentTime(targetTime);
+        this.setTotalIdleTime(this.totalAmountAtWork - this.totalAmountOfWorkTime);
     }
 }

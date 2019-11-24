@@ -12,20 +12,22 @@ import java.util.Queue;
 
 public abstract class Cashier {
 
-    private String name;                    // name of the cashier, for results identification
-    protected LinkedList<Customer> waitingQueue; // queue of waiting customers
-    protected LocalTime currentTime;        // tracks time for the cashier during simulation
-    protected int totalIdleTime;            // tracks cumulative seconds when there was no work for the cashier
-    protected int maxQueueLength;           // tracks the maximum number of customers at the cashier at any time
-    protected int timeWorked;
+    private String name;                    // name of the cashier
+    protected LinkedList<Customer> waitingQueue; // waiting customers
+    protected LocalTime currentTime;        // localtime for the cashier during simulation
+    protected int totalIdleTime;            // cumulative seconds when idling
+    protected int maxQueueLength;           // maximum number of customers
+    protected int timeWorked;               // total time worked
     protected int totalAmountAtWork;
     protected int totalAmountOfWorkTime;
-    protected Customer workingOnCustomer;
+    protected Customer currentCustomer;
     protected int totalCustomers;
     protected List<Integer> waitingTimes;
 
-    // during simulation. Includes both waiting customers and the customer being served
-
+    /**
+     * Default constructor
+     * @param name String
+     */
     protected Cashier(String name) {
         this.name = name;
         this.waitingQueue = new LinkedList<>();
@@ -34,7 +36,7 @@ public abstract class Cashier {
     /**
      * restart the state if simulation of the cashier to initial time
      * with empty queues
-     * @param LocalTime
+     * @param currentTime LocalTime
      */
     public void reStart(LocalTime currentTime) {
         this.waitingQueue.clear();
@@ -44,16 +46,14 @@ public abstract class Cashier {
         this.totalAmountAtWork = 0;
         this.totalAmountOfWorkTime = 0;
         this.totalCustomers = 0;
-        this.workingOnCustomer = null;
+        this.currentCustomer = null;
         this.waitingTimes = new ArrayList<>();
-
-        // TODO: you may need to override this method in sub-classes
     }
 
     /**
      * calculate the expected nett checkout time of a customer with a given number of items
      * this may be different for different types of Cashiers
-     * @param numberOfItems
+     * @param numberOfItems Int
      * @return
      */
     public abstract int expectedCheckOutTime(int numberOfItems);
@@ -65,8 +65,8 @@ public abstract class Cashier {
      * b) the remaining work of the cashier's current customer(s) being served
      * c) the position that the given customer may obtain in the queue
      * d) and the workload of the customers in the waiting queue in front of the given customer
-     * @param customer
-     * @return
+     * @param customer Customer
+     * @return waitingTime Int
      */
     public abstract int expectedWaitingTime(Customer customer);
 
@@ -77,67 +77,21 @@ public abstract class Cashier {
      * b) serving new customers that are waiting on the queue
      * c) sitting idle, taking a break until time has reached targetTime,
      *      after which new customers may arrive.
-     * @param targetTime
+     * @param targetTime LocalTime
      */
-    public void doTheWorkUntil(LocalTime targetTime) {
-        int elapsed = (int) ChronoUnit.SECONDS.between(this.getCurrentTime(), targetTime);
-        this.totalAmountAtWork += elapsed;
-        final int FIXEDTIME = 20;
-        final int TIMEPERITEM = 2;
-
-        //Check of de currentCustomer bestaat, haal de tijd eraf en zet currentcustomer op null
-        if(this.workingOnCustomer != null) {
-            int totalCustomerTime = FIXEDTIME + (TIMEPERITEM * this.workingOnCustomer.getNumberOfItems());
-            if(elapsed > totalCustomerTime) {
-                elapsed = elapsed - totalCustomerTime;
-                this.totalAmountOfWorkTime += totalCustomerTime;
-                this.workingOnCustomer = null;
-                this.timeWorked = 0;
-            }else {
-                this.timeWorked += elapsed;
-                this.setCurrentTime(targetTime);
-                return;
-            }
-        }
-
-        while(this.waitingQueue.size() > 0) {
-            Customer currentCustomer = (Customer) this.waitingQueue.peek();
-            if(currentCustomer.getNumberOfItems() == 0) {
-                this.waitingQueue.remove();
-                continue;
-            }
-
-            int totalCustomerTime = FIXEDTIME + (TIMEPERITEM * currentCustomer.getNumberOfItems());
-            if(elapsed > totalCustomerTime) {
-                elapsed = elapsed - totalCustomerTime;
-                this.totalAmountOfWorkTime += totalCustomerTime;
-                waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
-                this.waitingQueue.remove();
-                this.timeWorked = 0;
-
-            } else {
-                this.timeWorked = elapsed;
-                this.workingOnCustomer = currentCustomer;
-                waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
-                this.waitingQueue.remove();
-                break;
-            }
-        }
-        this.setCurrentTime(targetTime);
-        this.setTotalIdleTime(this.totalAmountAtWork - this.totalAmountOfWorkTime);
-    }
+    public abstract void doTheWorkUntil(LocalTime targetTime);
 
     /**
      * add a new customer to the queue of the cashier
      * the position of the new customer in the queue will depend on the priority configuration of the queue
-     * @param customer
+     * @param customer Customer
      */
     public void add(Customer customer) {
         // TODO add the customer to the queue of the cashier (if check-out is required)
         this.totalCustomers++;
         this.waitingQueue.add(customer);
         if(this.waitingQueue.size() >= this.maxQueueLength) {
-            if(this.workingOnCustomer != null) {
+            if(this.currentCustomer != null) {
                 this.maxQueueLength = this.waitingQueue.size() + 1;
             }else {
                 this.maxQueueLength = this.waitingQueue.size();

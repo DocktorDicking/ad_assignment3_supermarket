@@ -1,29 +1,12 @@
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 
-public class PriorityCashier extends Cashier {
+public class PriorityCashier extends FIFOCashier {
 
     private final int maxNumPriorityItems;
 
     public PriorityCashier(String name, int maxNumPriorityItems) {
         super(name);
         this.maxNumPriorityItems = maxNumPriorityItems;
-    }
-
-    @Override
-    public int expectedCheckOutTime(int numberOfItems) {
-        int fixedTime = 20;
-        int timePerItem = 2;
-        int checkOutTime = 0;
-
-        if(numberOfItems == 0) {
-            return checkOutTime;
-        }
-
-        checkOutTime = fixedTime + (timePerItem * numberOfItems);
-
-        return checkOutTime;
     }
 
     @Override
@@ -49,8 +32,8 @@ public class PriorityCashier extends Cashier {
             waitingTime += fixedTime + (timePerItem * currentCustomer.getNumberOfItems());
         }
 
-        if(this.workingOnCustomer != null) {
-            waitingTime += fixedTime + (timePerItem * this.workingOnCustomer.getNumberOfItems());
+        if(this.currentCustomer != null) {
+            waitingTime += fixedTime + (timePerItem * this.currentCustomer.getNumberOfItems());
         }
 
         return waitingTime - this.timeWorked;
@@ -80,7 +63,7 @@ public class PriorityCashier extends Cashier {
             this.waitingQueue.add(customer);
         }
         if(this.waitingQueue.size() >= this.maxQueueLength) {
-            if(this.workingOnCustomer != null) {
+            if(this.currentCustomer != null) {
                 this.maxQueueLength = this.waitingQueue.size() + 1;
             }else {
                 this.maxQueueLength = this.waitingQueue.size();

@@ -234,45 +234,31 @@ public class Supermarket {
      * simulate the cashiers while handling all customers that enter their queues
      */
     public void simulateCashiers() {
-        Queue<Customer> shoppingQueue = new LinkedList<>();
-
-        // TODO: create an appropriate data structure for the shoppingQueue
-        //  and add all customers in the supermarket
-
         // all cashiers restart at open time
         for (Cashier c : this.cashiers) {
             c.reStart(this.openTime);
         }
 
-        // loop door alle customers en sorteer ze op volgorde
-        ArrayList<Customer> customerList = new ArrayList<>();
-        customerList.addAll(this.customers);
-        Collections.sort(customerList, new SortCustomerByQueuedAt());
+        //Sort customer data on arrival time and create a queue of sorted customers
+        ArrayList<Customer> customerList = new ArrayList<>(this.customers);
+        customerList.sort(new SortCustomerByQueuedAt());
+        Queue<Customer> shoppingQueue = new LinkedList<>(customerList);
 
-        for (Customer customer: customerList) {
-            shoppingQueue.add(customer);
-        }
-
-        // poll the customers from the queue one by one
-        // and redirect them to the cashier of their choice
-
-        // TODO: get the first customer from the shoppingQueue;
+        //Get first customer in the Queue
         Customer nextCustomer = shoppingQueue.peek();
-
         while (nextCustomer != null) {
-            // let all cashiers finish up their work before the given arrival time of the customer
+            //Let cashier work until new customer arrives.
             for (Cashier c : this.cashiers) {
                 c.doTheWorkUntil(nextCustomer.getQueuedAt());
             }
-            // ask the customer about his preferred cashier for the check-out
+
+            //Select fastest Queue and redirect customer to that queue
             Cashier selectedCashier = nextCustomer.selectCashier(this.cashiers);
-            // redirect the customer to the selected cashier
             selectedCashier.add(nextCustomer);
 
+            //Remove current customer from queue and get new customer.
             shoppingQueue.remove();
             nextCustomer = shoppingQueue.peek();
-
-            // TODO: next customer is arriving, get the next customer from the shoppingQueue
         }
         // all customers have been handled;
         // cashiers finish their work until closing time + some overtime
