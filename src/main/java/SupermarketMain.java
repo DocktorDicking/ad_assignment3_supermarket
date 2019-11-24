@@ -1,38 +1,57 @@
 public class SupermarketMain {
     public static void main(String[] args) {
 
-        // load the simulation configuration with open and closing times
-        // and products and customers
+        /*
+        Load simulation config with open and closing times and products and customers.
+         */
         Supermarket supermarket =
                 Supermarket.importFromXML("jambi250_8.xml");
         supermarket.printCustomerStatistics();
 
-        // configure the cashiers for the base scenario
+        /*
+        Config for base scenario
+        1 FIFO cashier
+         */
         supermarket.getCashiers().clear();
-        // TODO Add a FIFO cashiers
-        //  (uncomment these lines once the FIFOCashier class has been implemented)
         supermarket.getCashiers().add(new FIFOCashier("FIFO"));
 
         // simulate the configuration and print the result
         supermarket.simulateCashiers();
         supermarket.printSimulationResults();
 
-        // configure the cashiers for the priority scenario
+        /*
+        Config for PRIO only scenario
+        1 PRIO
+         */
         supermarket.getCashiers().clear();
-        // TODO Add a PRIO cashier respecting 5 priority items
-        //  (uncomment these lines once the PriorityCashier class has been implemented)
         supermarket.getCashiers().add(new PriorityCashier("PRIO",5));
 
         // simulate the configuration and print the result
         supermarket.simulateCashiers();
         supermarket.printSimulationResults();
 
-        // configure the cashiers for the self-service scenario
+        /*
+        Config for self-service scenario
+        1 FIFO cashier
+        1 PRIO cashier
+         */
         supermarket.getCashiers().clear();
-        // TODO Add 1 FIFO cashiers and 1 PRIO cashier
-        //  (uncomment these lines once the FIFO- and PriorityCashier class have been implemented)
         supermarket.getCashiers().add(new FIFOCashier("FIFO"));
-        supermarket.getCashiers().add(new FIFOCashier("PRIO"));
+        supermarket.getCashiers().add(new PriorityCashier("PRIO", 5));
+
+        // simulate the configuration and print the result
+        supermarket.simulateCashiers();
+        supermarket.printSimulationResults();
+
+        /*
+        Config for custom scenario
+        2 FIFO cashiers
+        1 PRIO cashiers
+         */
+        supermarket.getCashiers().clear();
+        supermarket.getCashiers().add(new FIFOCashier("FIFO-1"));
+        supermarket.getCashiers().add(new FIFOCashier("FIFO-2"));
+        supermarket.getCashiers().add(new PriorityCashier("PRIO", 5));
 
         // simulate the configuration and print the result
         supermarket.simulateCashiers();
