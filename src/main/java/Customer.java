@@ -59,23 +59,19 @@ public class Customer {
 
         if (cashiers.size() == 1) {
             selectedCashier = cashiers.get(0);
-        } else if (cashiers.size() == 0) {
-            selectedCashier = null;
-        } else {
+        } else if (cashiers.size() > 1) {
             for (Cashier cashier: cashiers) {
                 int expectedWaitingTime = selfCheckoutTime + cashier.expectedWaitingTime(this);
-                if (passthroughTime < expectedWaitingTime) {
+                if (expectedWaitingTime < passthroughTime || passthroughTime == 0) {
                     passthroughTime = expectedWaitingTime;
                     selectedCashier = cashier;
                 }
             }
-
+        }
             // TODO find the cashier with the lowest expected pass-through time.
             //  passthrough time = waiting time + time to check-out my own bought items
             //  waiting time = remaining time for the current customer +
             //          check-out times of all other customers that will be in front of me in the cashier's queue
-
-        }
         return selectedCashier;
     }
 

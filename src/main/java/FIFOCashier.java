@@ -24,19 +24,19 @@ public class FIFOCashier extends Cashier {
 
     @Override
     public int expectedWaitingTime(Customer customer) {
-        int fixedTime = 20;
-        int timePerItem = 2;
-        int waitingTime = 0;
+        final int START_TIME = 20;
+        final int ITEM_TIME = 2;
+        int totalTime = 0;
 
         for(int i=0; i < this.waitingQueue.size(); i++) {
             Customer currentCustomer = (Customer) this.waitingQueue.get(i);
-            waitingTime += fixedTime + (timePerItem * currentCustomer.getNumberOfItems());
+            totalTime += START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
         }
 
         if(this.workingOnCustomer != null) {
-            waitingTime += fixedTime + (timePerItem * this.workingOnCustomer.getNumberOfItems());
+            totalTime += START_TIME + (ITEM_TIME * this.workingOnCustomer.getNumberOfItems());
         }
 
-        return waitingTime - this.timeWorked;
+        return totalTime - this.timeWorked;
     }
 }

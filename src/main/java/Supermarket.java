@@ -281,7 +281,7 @@ public class Supermarket {
             c.doTheWorkUntil(this.closingTime.plusSeconds(overtime));
             // remove the overtime from the current time and the idle time of the cashier
             c.setCurrentTime(c.getCurrentTime().minusSeconds(overtime));
-            c.setTotalIdleTime(c.getTotalIdleTime()-overtime);
+            c.setTotalIdleTime(c.getTotalIdleTime() - overtime);
         }
     }
 
@@ -320,8 +320,6 @@ public class Supermarket {
      */
     public static Supermarket importFromXML(String resourceName) {
         XMLParser xmlParser = new XMLParser(resourceName);
-
-
         try {
             xmlParser.nextTag();
             xmlParser.require(XMLStreamConstants.START_ELEMENT, null, "supermarket");
