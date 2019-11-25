@@ -4,7 +4,6 @@
  */
 
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -99,8 +98,15 @@ public abstract class Cashier {
         }
     }
 
+    /**
+     * Returns the average time the customer needs to wait until helped. Rounding off the number to a 2 decimal number.
+     * (##.##)
+     *
+     * The result is based on earlier waiting times.
+     * @return double
+     */
     public double getAverageWaitingTime() {
-        int totalWaitingTime = 0;
+        double totalWaitingTime = 0;
         for (int waitingTime : this.waitingTimes) {
             totalWaitingTime += waitingTime;
         }
@@ -108,9 +114,15 @@ public abstract class Cashier {
         if(totalWaitingTime == 0) {
             return 0.0;
         }
-        return totalWaitingTime / this.totalCustomers;
+        //Round result to a 2 decimal double
+        return (double) Math.round((totalWaitingTime / this.totalCustomers) * 100) / 100;
     }
 
+    /**
+     * Returns the maximum waiting time before a customer is helped.
+     * Result is based on this.waitingTimes List. Taking the highest value and returning it.
+     * @return maxWaitingTime int
+     */
     public int getMaxWaitingTime() {
         int maxWaitingTime = 0;
         for (int waitingTime : this.waitingTimes) {
@@ -120,10 +132,6 @@ public abstract class Cashier {
         }
         return maxWaitingTime;
     }
-
-
-    // TODO implement relevant overrides and/or local classes to be able to
-    //  print Cashiers and/or use them in sets, maps and/or priority queues.
 
     public Queue<Customer> getWaitingQueue() {
         return waitingQueue;
