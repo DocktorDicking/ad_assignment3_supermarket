@@ -38,7 +38,7 @@ public class Supermarket {
     }
 
     /**
-     * report statistics of the input data and results of the simulation
+     * This method will print Customer statistics and simulation results to the console.
      */
     public void printCustomerStatistics() {
         System.out.printf("\nCustomer Statistics of '%s' between %s and %s\n",
@@ -52,7 +52,7 @@ public class Supermarket {
         System.out.printf("%d customers have shopped %d items out of %d different products\n",
                 this.customers.size(), this.getTotalNumberOfItems(), this.products.size());
 
-        System.out.printf("Revenues and most bought product per zip-code:\n");
+        System.out.print("Revenues and most bought product per zip-code:\n");
         Map<String, Double> revenues = this.revenueByZipCode();
         Map<String, Product> populars = this.mostBoughtProductByZipCode();
 
@@ -78,19 +78,20 @@ public class Supermarket {
      * reports results of the cashier simulation
      */
     public void printSimulationResults() {
-
         System.out.print("\nSimulation scenario results:\n");
         System.out.print("Cashiers: \tn-customers: \tavg-wait-time: \tmax-wait-time: \tmax-queue-length: \tavg-check-out-time: \tidle-time:\n");
         System.out.print("-------------------------------------------------------------------------------------------------------------------\n");
 
         for (Cashier c : this.cashiers) {
             double totalCheckoutTime = 0.0;
-            for (Customer customer : this.customers) {
+            for (Customer customer : c.history) {
                 totalCheckoutTime = totalCheckoutTime + c.expectedCheckOutTime(customer.getNumberOfItems());
             }
+            double averageCheckOutTime = (totalCheckoutTime / c.history.size());
+            averageCheckOutTime = Math.round(averageCheckOutTime * 100.0) / 100.0;
             System.out.printf("%s\t\t\t %s\t\t\t\t %s\t\t\t\t %s\t\t\t\t %s\t\t\t\t %s\t\t\t\t\t %s\n",
                     c.getName(), c.getTotalCustomers(), c.getAverageWaitingTime(), c.getMaxWaitingTime(),
-                    c.getMaxQueueLength(),  (totalCheckoutTime / this.customers.size()), c.getTotalIdleTime());
+                    c.getMaxQueueLength(),  averageCheckOutTime, c.getTotalIdleTime());
         }
 
         // TODO: report simulation results per cashier:
@@ -261,7 +262,7 @@ public class Supermarket {
             nextCustomer = shoppingQueue.peek();
         }
         // all customers have been handled;
-        // cashiers finish their work until closing time + some overtime
+        // cashiers finish their work until closing time + 15 minutes of overtime
         final int overtime = 15*60;
         for (Cashier c : this.cashiers) {
             c.doTheWorkUntil(this.closingTime.plusSeconds(overtime));

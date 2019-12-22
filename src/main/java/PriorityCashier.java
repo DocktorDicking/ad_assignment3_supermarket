@@ -42,9 +42,10 @@ public class PriorityCashier extends FIFOCashier {
     public void add(Customer customer) {
         LinkedList tempQueue = new LinkedList();
         this.totalCustomers++;
+        this.history.add(customer);
 
         while(this.waitingQueue.size() > 0) {
-            Customer nextCustomer = (Customer) this.waitingQueue.peek();
+            Customer nextCustomer = this.waitingQueue.peek();
             if(nextCustomer.getNumberOfItems() > customer.getNumberOfItems() && customer.getNumberOfItems() > 5) {
                 tempQueue.add(nextCustomer);
                 this.waitingQueue.remove();
