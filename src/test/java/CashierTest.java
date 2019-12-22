@@ -81,7 +81,7 @@ class CashierTest {
         if (cashier == null) return;
         cashier.reStart(LocalTime.NOON);
         assertThat(cashier.expectedCheckOutTime(this.customer0.getNumberOfItems()), is(0));
-        assertThat(cashier.expectedCheckOutTime(this.customer1.getNumberOfItems()), is(c1 + 1 * c2));
+        assertThat(cashier.expectedCheckOutTime(this.customer1.getNumberOfItems()), is(c1 + c2));
         assertThat(cashier.expectedCheckOutTime(this.customer2.getNumberOfItems()), is(c1 + 2 * c2));
         assertThat(cashier.expectedCheckOutTime(this.customer9.getNumberOfItems()), is(c1 + 9 * c2));
     }

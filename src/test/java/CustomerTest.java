@@ -47,9 +47,9 @@ class CustomerTest {
 
     @Test
     void t013_customerCalculatesTotalBill() {
-        assertEquals(0.0, this.customer0.calculateTotalBill());
-        assertEquals(1.0, this.customer1.calculateTotalBill());
-        assertThat(4.0, is(this.customer2.calculateTotalBill()));
-        assertThat(14.0, is(this.customer9.calculateTotalBill()));
+        assertEquals(0.0, this.customer0.calculateTotalCost());
+        assertEquals(1.0, this.customer1.calculateTotalCost());
+        assertThat(4.0, is(this.customer2.calculateTotalCost()));
+        assertThat(14.0, is(this.customer9.calculateTotalCost()));
     }
 }
