@@ -25,8 +25,8 @@ public class Customer {
     }
 
     /**
-     * calculate the total number of items purchased by this customer
-     * @return
+     * Calculate the total number of items purchased by this customer
+     * @return numItems int
      */
     public int getNumberOfItems() {
         int numItems = 0;
@@ -36,7 +36,11 @@ public class Customer {
         return numItems;
     }
 
-    public double calculateTotalBill() {
+    /**
+     * Calculates the total cost of all products a customer buys.
+     * @return totalBill double
+     */
+    public double calculateTotalCost() {
         double totalBill = 0.0;
         for (Purchase p: this.getItems()) {
             totalBill += p.getProduct().getPrice() * p.getAmount();
@@ -68,15 +72,8 @@ public class Customer {
                 }
             }
         }
-            // TODO find the cashier with the lowest expected pass-through time.
-            //  passthrough time = waiting time + time to check-out my own bought items
-            //  waiting time = remaining time for the current customer +
-            //          check-out times of all other customers that will be in front of me in the cashier's queue
         return selectedCashier;
     }
-
-    // TODO implement relevant overrides and/or local classes to be able to
-    //  print Customers and/or use them in sets, maps and/or priority queues.
 
     public LocalTime getQueuedAt() {
         return queuedAt;

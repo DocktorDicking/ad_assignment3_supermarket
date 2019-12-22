@@ -13,19 +13,21 @@ public class FIFOCashier extends Cashier {
 
     /**
      * Calculates the expected time needed to checkout based on the number of items.
+     * Using the uniform model from the assignment.
+     *
      * @param numberOfItems Int
      * @return checkOutTime Int
      */
     @Override
     public int expectedCheckOutTime(int numberOfItems) {
-        int fixedTime = 20;
-        int timePerItem = 2;
+        final int FIXED_TIME = 20;
+        final int TIME_PER_ITEM = 2;
         int checkOutTime = 0;
 
         if(numberOfItems == 0) {
             return checkOutTime;
         }
-        checkOutTime = fixedTime + (timePerItem * numberOfItems);
+        checkOutTime = FIXED_TIME + (TIME_PER_ITEM * numberOfItems);
         return checkOutTime;
     }
 
@@ -87,26 +89,26 @@ public class FIFOCashier extends Cashier {
             this.timeWorked = 0;
         }
 
-
         while(this.waitingQueue.size() > 0) {
             Customer currentCustomer = this.waitingQueue.peek();
-            if(currentCustomer.getNumberOfItems() == 0) {
-                this.waitingQueue.remove();
-            }
 
-            int totalCustomerTime = START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
-            if(elapsed > totalCustomerTime) {
-                elapsed = elapsed - totalCustomerTime;
-                this.totalAmountOfWorkTime += totalCustomerTime;
-                waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
-                this.waitingQueue.remove();
-                this.timeWorked = 0;
+            if (currentCustomer.getNumberOfItems() != 0) {
+                int totalCustomerTime = START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
+                if(elapsed > totalCustomerTime) {
+                    elapsed = elapsed - totalCustomerTime;
+                    this.totalAmountOfWorkTime += totalCustomerTime;
+                    waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
+                    this.waitingQueue.remove();
+                    this.timeWorked = 0;
+                } else {
+                    this.timeWorked = elapsed;
+                    this.currentCustomer = currentCustomer;
+                    waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
+                    this.waitingQueue.remove();
+                    break;
+                }
             } else {
-                this.timeWorked = elapsed;
-                this.currentCustomer = currentCustomer;
-                waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
                 this.waitingQueue.remove();
-                break;
             }
         }
         this.setCurrentTime(targetTime);

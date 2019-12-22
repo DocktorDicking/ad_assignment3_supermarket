@@ -13,6 +13,7 @@ public abstract class Cashier {
 
     private String name;                    // name of the cashier
     protected LinkedList<Customer> waitingQueue; // waiting customers
+    protected LinkedList<Customer> history;
     protected LocalTime currentTime;        // localtime for the cashier during simulation
     protected int totalIdleTime;            // cumulative seconds when idling
     protected int maxQueueLength;           // maximum number of customers
@@ -30,6 +31,7 @@ public abstract class Cashier {
     protected Cashier(String name) {
         this.name = name;
         this.waitingQueue = new LinkedList<>();
+        this.history = new LinkedList<>();
     }
 
     /**
@@ -39,6 +41,7 @@ public abstract class Cashier {
      */
     public void reStart(LocalTime currentTime) {
         this.waitingQueue.clear();
+        this.history.clear();
         this.currentTime = currentTime;
         this.totalIdleTime = 0;
         this.maxQueueLength = 0;
@@ -89,6 +92,7 @@ public abstract class Cashier {
         // TODO add the customer to the queue of the cashier (if check-out is required)
         this.totalCustomers++;
         this.waitingQueue.add(customer);
+        this.history.add(customer);
         if(this.waitingQueue.size() >= this.maxQueueLength) {
             if(this.currentCustomer != null) {
                 this.maxQueueLength = this.waitingQueue.size() + 1;
