@@ -132,8 +132,14 @@ public class Supermarket {
                 revenues.put(c.getZipCode(), 0.00);
             }
         }
-            return revenues;
+        //TreeMap sorts zipcodes
+        revenues = new TreeMap<>(revenues);
+        return revenues;
     }
+
+//    public Map<String, Product> mostBoughtProductByZipCode() {
+//
+//    }
 
     /**
      * (DIFFICULT!!!)
