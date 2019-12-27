@@ -1,6 +1,7 @@
 /**
  * Supermarket Customer check-out and Cashier simulation
- * @author  hbo-ict@hva.nl
+ *
+ * @author hbo-ict@hva.nl
  */
 
 import java.time.LocalTime;
@@ -13,7 +14,7 @@ public abstract class Cashier {
 
     private String name;                    // name of the cashier
     protected LinkedList<Customer> waitingQueue; // waiting customers
-    protected LinkedList<Customer> history;
+    protected LinkedList<Customer> history; // Helped customers
     protected LocalTime currentTime;        // localtime for the cashier during simulation
     protected int totalIdleTime;            // cumulative seconds when idling
     protected int maxQueueLength;           // maximum number of customers
@@ -56,7 +57,7 @@ public abstract class Cashier {
      * calculate the expected nett checkout time of a customer with a given number of items
      * this may be different for different types of Cashiers
      * @param numberOfItems Int
-     * @return
+     * @return int
      */
     public abstract int expectedCheckOutTime(int numberOfItems);
 
@@ -89,14 +90,13 @@ public abstract class Cashier {
      * @param customer Customer
      */
     public void add(Customer customer) {
-        // TODO add the customer to the queue of the cashier (if check-out is required)
         this.totalCustomers++;
         this.waitingQueue.add(customer);
         this.history.add(customer);
-        if(this.waitingQueue.size() >= this.maxQueueLength) {
-            if(this.currentCustomer != null) {
+        if (this.waitingQueue.size() >= this.maxQueueLength) {
+            if (this.currentCustomer != null) {
                 this.maxQueueLength = this.waitingQueue.size() + 1;
-            }else {
+            } else {
                 this.maxQueueLength = this.waitingQueue.size();
             }
         }
@@ -115,7 +115,7 @@ public abstract class Cashier {
             totalWaitingTime += waitingTime;
         }
 
-        if(totalWaitingTime == 0) {
+        if (totalWaitingTime == 0) {
             return 0.0;
         }
         //Round result to a 2 decimal double
@@ -130,7 +130,7 @@ public abstract class Cashier {
     public int getMaxWaitingTime() {
         int maxWaitingTime = 0;
         for (int waitingTime : this.waitingTimes) {
-            if(waitingTime > maxWaitingTime) {
+            if (waitingTime > maxWaitingTime) {
                 maxWaitingTime = waitingTime;
             }
         }
@@ -164,6 +164,7 @@ public abstract class Cashier {
     public void setCurrentTime(LocalTime currentTime) {
         this.currentTime = currentTime;
     }
+
     public void setTotalIdleTime(int totalIdleTime) {
         this.totalIdleTime = totalIdleTime;
     }

@@ -93,20 +93,6 @@ public class Supermarket {
                     c.getName(), c.getTotalCustomers(), c.getAverageWaitingTime(), c.getMaxWaitingTime(),
                     c.getMaxQueueLength(),  averageCheckOutTime, c.getTotalIdleTime());
         }
-
-        // TODO: report simulation results per cashier:
-        //  a) number of customers
-        //  b) average waiting time per customer
-        //  c) maximum waiting time by any customer at the given cashier
-        //  d) maximum queue length of waiting customers including the customer being served
-        //  e) average check-out time of customers at the given cashier
-        //  f) total idle time of the cashier
-        //     (a self-service area is idle already if at least one terminal is idle)
-
-
-        // TODO: report the same overall simulation results across all cashiers
-        //  as customer weighted averages or sums of totals.
-
     }
 
     /**
@@ -136,10 +122,6 @@ public class Supermarket {
         revenues = new TreeMap<>(revenues);
         return revenues;
     }
-
-//    public Map<String, Product> mostBoughtProductByZipCode() {
-//
-//    }
 
     /**
      * (DIFFICULT!!!)

@@ -1,9 +1,11 @@
 /**
  * Supermarket Customer check-out and Cashier simulation
- * @author  hbo-ict@hva.nl
+ *
+ * @author hbo-ict@hva.nl
  */
 
 import utils.XMLParser;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.time.LocalTime;
@@ -42,7 +44,7 @@ public class Customer {
      */
     public double calculateTotalCost() {
         double totalBill = 0.0;
-        for (Purchase p: this.getItems()) {
+        for (Purchase p : this.getItems()) {
             totalBill += p.getProduct().getPrice() * p.getAmount();
         }
         return totalBill;
@@ -64,7 +66,7 @@ public class Customer {
         if (cashiers.size() == 1) {
             selectedCashier = cashiers.get(0);
         } else if (cashiers.size() > 1) {
-            for (Cashier cashier: cashiers) {
+            for (Cashier cashier : cashiers) {
                 int expectedWaitingTime = selfCheckoutTime + cashier.expectedWaitingTime(this);
                 if (expectedWaitingTime < passthroughTime || passthroughTime == 0) {
                     passthroughTime = expectedWaitingTime;
@@ -115,10 +117,10 @@ public class Customer {
      * read a series of customers with their purchases from the xml stream
      * and add them to the provided customers list
      * associatiate the purchases with the appropriate products
-     * @param xmlParser
-     * @param customers
-     * @param products
-     * @return
+     * @param xmlParser XMLParser
+     * @param customers List
+     * @param products Set
+     * @return List
      * @throws XMLStreamException
      */
     public static List<Customer> importCustomersFromXML(XMLParser xmlParser, List<Customer> customers,

@@ -2,9 +2,12 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 public class FIFOCashier extends Cashier {
+    private final int FIXED_TIME = 20;
+    private final int TIME_PER_ITEM = 2;
 
     /**
      * Default constructor.
+     *
      * @param name String
      */
     public FIFOCashier(String name) {
@@ -20,11 +23,9 @@ public class FIFOCashier extends Cashier {
      */
     @Override
     public int expectedCheckOutTime(int numberOfItems) {
-        final int FIXED_TIME = 20;
-        final int TIME_PER_ITEM = 2;
         int checkOutTime = 0;
 
-        if(numberOfItems == 0) {
+        if (numberOfItems == 0) {
             return checkOutTime;
         }
         checkOutTime = FIXED_TIME + (TIME_PER_ITEM * numberOfItems);
@@ -33,40 +34,38 @@ public class FIFOCashier extends Cashier {
 
     /**
      * Calculates expected waiting time (to the cashier) for a customer.
+     *
      * @param customer Customer
      * @return
      */
     @Override
     public int expectedWaitingTime(Customer customer) {
-        final int START_TIME = 20;
-        final int ITEM_TIME = 2;
         int totalTime = 0;
 
-        for(int i=0; i < this.waitingQueue.size(); i++) {
+        for (int i = 0; i < this.waitingQueue.size(); i++) {
             Customer currentCustomer = this.waitingQueue.get(i);
-            totalTime += START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
+            totalTime += FIXED_TIME + (TIME_PER_ITEM * currentCustomer.getNumberOfItems());
         }
 
-        if(this.currentCustomer != null) {
-            totalTime += START_TIME + (ITEM_TIME * this.currentCustomer.getNumberOfItems());
+        if (this.currentCustomer != null) {
+            totalTime += FIXED_TIME + (TIME_PER_ITEM * this.currentCustomer.getNumberOfItems());
         }
 
         return totalTime - this.timeWorked;
     }
 
-    /** TODO: Rewrite this docu.
-     * proceed the cashier's work until the given targetTime has been reached
-     * this work may involve:
-     * a) continuing or finishing the current customer(s) begin served
-     * b) serving new customers that are waiting on the queue
-     * c) sitting idle, taking a break until time has reached targetTime,
-     *      after which new customers may arrive.
+    /**
+     * Proceed the cahier's work until the given targetTime has been reached.
+     *
+     * Cashier work may involve:
+     * - Continuing or finishing the current customer(s) being served
+     * - Serving new customers that are waiting in the queue
+     * - Sitting idle, taking a break until time has reached targetTime
+     *
      * @param targetTime LocalTime
      */
     @Override
     public void doTheWorkUntil(LocalTime targetTime) {
-        final int START_TIME = 20;
-        final int ITEM_TIME = 2;
         int elapsed = (int) ChronoUnit.SECONDS.between(this.getCurrentTime(), targetTime);
         this.totalAmountAtWork += elapsed;
 
@@ -75,8 +74,8 @@ public class FIFOCashier extends Cashier {
         If elapsed time is smaller then totalCustomerTime, set time worked and currentTime to elapsed time, return.
         If elapsed time is bigger then totalCustomerTime,
          */
-        if(this.currentCustomer != null) {
-            int totalCustomerTime = START_TIME + (ITEM_TIME * this.currentCustomer.getNumberOfItems());
+        if (this.currentCustomer != null) {
+            int totalCustomerTime = FIXED_TIME + (TIME_PER_ITEM * this.currentCustomer.getNumberOfItems());
             if (elapsed < totalCustomerTime) {
                 this.timeWorked += elapsed;
                 this.setCurrentTime(targetTime);
@@ -89,21 +88,21 @@ public class FIFOCashier extends Cashier {
             this.timeWorked = 0;
         }
 
-        while(this.waitingQueue.size() > 0) {
+        while (this.waitingQueue.size() > 0) {
             Customer currentCustomer = this.waitingQueue.peek();
 
             if (currentCustomer.getNumberOfItems() != 0) {
-                int totalCustomerTime = START_TIME + (ITEM_TIME * currentCustomer.getNumberOfItems());
-                if(elapsed > totalCustomerTime) {
+                int totalCustomerTime = FIXED_TIME + (TIME_PER_ITEM * currentCustomer.getNumberOfItems());
+                if (elapsed > totalCustomerTime) {
                     elapsed = elapsed - totalCustomerTime;
                     this.totalAmountOfWorkTime += totalCustomerTime;
-                    waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
+                    waitingTimes.add((int) ChronoUnit.SECONDS.between(currentCustomer.getQueuedAt(), this.getCurrentTime()));
                     this.waitingQueue.remove();
                     this.timeWorked = 0;
                 } else {
                     this.timeWorked = elapsed;
                     this.currentCustomer = currentCustomer;
-                    waitingTimes.add((int) ChronoUnit.SECONDS.between( currentCustomer.getQueuedAt(), this.getCurrentTime()));
+                    waitingTimes.add((int) ChronoUnit.SECONDS.between(currentCustomer.getQueuedAt(), this.getCurrentTime()));
                     this.waitingQueue.remove();
                     break;
                 }

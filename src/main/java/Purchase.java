@@ -21,9 +21,6 @@ public class Purchase {
         this.amount = n;
     }
 
-    // TODO implement relevant overrides and/or local classes to be able to
-    //  print Purchases and/or use them in sets, maps and/or priority queues.
-
     public Product getProduct() {
         return product;
     }
