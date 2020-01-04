@@ -2,9 +2,6 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 public class FIFOCashier extends Cashier {
-    private final int FIXED_TIME = 20;
-    private final int TIME_PER_ITEM = 2;
-
     /**
      * Default constructor.
      *

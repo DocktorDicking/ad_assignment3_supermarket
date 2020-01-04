@@ -11,19 +11,21 @@ import java.util.List;
 import java.util.Queue;
 
 public abstract class Cashier {
+    final int FIXED_TIME = 20;
+    final int TIME_PER_ITEM = 2;
 
     private String name;                    // name of the cashier
-    protected LinkedList<Customer> waitingQueue; // waiting customers
-    protected LinkedList<Customer> history; // Helped customers
-    protected LocalTime currentTime;        // localtime for the cashier during simulation
-    protected int totalIdleTime;            // cumulative seconds when idling
-    protected int maxQueueLength;           // maximum number of customers
-    protected int timeWorked;               // total time worked
-    protected int totalAmountAtWork;
-    protected int totalAmountOfWorkTime;
-    protected Customer currentCustomer;
-    protected int totalCustomers;
-    protected List<Integer> waitingTimes;
+    LinkedList<Customer> waitingQueue; // waiting customers
+    LinkedList<Customer> history; // Helped customers
+    private LocalTime currentTime;        // localtime for the cashier during simulation
+    private int totalIdleTime;            // cumulative seconds when idling
+    int maxQueueLength;           // maximum number of customers
+    int timeWorked;               // total time worked
+    int totalAmountAtWork;
+    int totalAmountOfWorkTime;
+    Customer currentCustomer;
+    int totalCustomers;
+    List<Integer> waitingTimes;
 
     /**
      * Default constructor
@@ -93,13 +95,7 @@ public abstract class Cashier {
         this.totalCustomers++;
         this.waitingQueue.add(customer);
         this.history.add(customer);
-        if (this.waitingQueue.size() >= this.maxQueueLength) {
-            if (this.currentCustomer != null) {
-                this.maxQueueLength = this.waitingQueue.size() + 1;
-            } else {
-                this.maxQueueLength = this.waitingQueue.size();
-            }
-        }
+        updateMaxQueueLength();
     }
 
     /**
@@ -135,6 +131,19 @@ public abstract class Cashier {
             }
         }
         return maxWaitingTime;
+    }
+
+    /**
+     * Updates the max queue length.
+     */
+    protected void updateMaxQueueLength() {
+        if (this.waitingQueue.size() >= this.maxQueueLength) {
+            if (this.currentCustomer != null) {
+                this.maxQueueLength = this.waitingQueue.size() + 1;
+            } else {
+                this.maxQueueLength = this.waitingQueue.size();
+            }
+        }
     }
 
     public Queue<Customer> getWaitingQueue() {
