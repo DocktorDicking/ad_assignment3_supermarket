@@ -20,6 +20,8 @@ public class Supermarket {
     private LocalTime openTime;         // start time of the simulation
     private LocalTime closingTime;      // end time of the simulation
 
+    private final int MINUTE = 60;
+
     public Supermarket(String name, LocalTime openTime, LocalTime closingTime) {
         this.name = name;
         this.setOpenTime(openTime);
@@ -102,8 +104,7 @@ public class Supermarket {
     public Map<String, Double> revenueByZipCode() {
         Map<String, Double> revenues = new HashMap<>();
 
-        // TODO create an appropriate data structure for the revenues
-        //  and calculate its contents
+        //Calculate revenues using data from customers and their purchases
         for (Customer c: this.customers) {
             for (Purchase p : c.getItems()) {
                 if (revenues.containsKey(c.getZipCode())) {
@@ -118,7 +119,7 @@ public class Supermarket {
                 revenues.put(c.getZipCode(), 0.00);
             }
         }
-        //TreeMap sorts zipcodes
+        //Using the TreeMap's natural way of sorting to sort data on zip code
         revenues = new TreeMap<>(revenues);
         return revenues;
     }
@@ -251,7 +252,7 @@ public class Supermarket {
         }
         // all customers have been handled;
         // cashiers finish their work until closing time + 15 minutes of overtime
-        final int overtime = 15*60;
+        final int overtime = 15 * MINUTE;
         for (Cashier c : this.cashiers) {
             c.doTheWorkUntil(this.closingTime.plusSeconds(overtime));
             // remove the overtime from the current time and the idle time of the cashier
@@ -367,16 +368,15 @@ public class Supermarket {
      * @param averageNrItems
      */
     public void addRandomCustomers(int nCustomers, int averageNrItems) {
-        if (!(this.products instanceof Collection) ||
-                !(this.customers instanceof Collection)
-        )   return;
+        //Check if parameters are initialized.
+        if (this.products == null || this.customers == null)   return;
 
         // copy the product to an array for easy random selection
         Product[] prods = new Product[this.products.size()];
         prods = this.products.toArray(prods);
 
         // compute an arrival interval range of at least 60 seconds that ends one minute before closing time if possible
-        int maxArrivalSeconds = Math.max(60, closingTime.toSecondOfDay() - openTime.toSecondOfDay() - 60);
+        int maxArrivalSeconds = Math.max(MINUTE, closingTime.toSecondOfDay() - openTime.toSecondOfDay() - MINUTE);
 
         for (int i = 0; i < nCustomers; i++) {
             // create a random customer with random arrival time and zip code
