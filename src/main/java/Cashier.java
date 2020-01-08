@@ -92,10 +92,13 @@ public abstract class Cashier {
      * @param customer Customer
      */
     public void add(Customer customer) {
-        this.totalCustomers++;
-        this.waitingQueue.add(customer);
-        this.history.add(customer);
-        updateMaxQueueLength();
+        //Let customers with less then 1 item skipp line completely.
+        if (customer.getNumberOfItems() > 0) {
+            this.totalCustomers++;
+            this.waitingQueue.add(customer);
+            this.history.add(customer);
+            updateMaxQueueLength();
+        }
     }
 
     /**
@@ -106,16 +109,14 @@ public abstract class Cashier {
      * @return double
      */
     public double getAverageWaitingTime() {
-        double totalWaitingTime = 0;
+        double totalWaitingTime = 0.0;
         for (int waitingTime : this.waitingTimes) {
             totalWaitingTime += waitingTime;
         }
 
-        if (totalWaitingTime == 0) {
-            return 0.0;
-        }
         //Round result to a 2 decimal double
-        return (double) Math.round((totalWaitingTime / this.totalCustomers) * 100) / 100;
+        return totalWaitingTime > 0 ?
+                (double) Math.round((totalWaitingTime / this.totalCustomers) * 100) / 100 : totalWaitingTime;
     }
 
     /**

@@ -31,7 +31,7 @@ public class SupermarketMain {
         supermarket.printSimulationResults();
 
         /*
-        Config for self-service scenario
+        Config for mixed scenario
         1 FIFO cashier
         1 PRIO cashier
          */

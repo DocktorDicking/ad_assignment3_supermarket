@@ -85,12 +85,13 @@ public class PriorityCashier extends FIFOCashier {
             return;
         }
 
-        //Give customer priority and move in front of queued customers with more then 6 items.
+        //Give new customer priority and move new customer in front of queued customers with more then 6 items.
         int indexCounter = 0;
         for (Customer next : this.waitingQueue) {
             if (next.getNumberOfItems() > (MAX_PRIORITY_ITEMS + 1)) {
                 this.waitingQueue.add(indexCounter,customer);
                 this.history.add(customer);
+                super.totalCustomers++;
                 super.updateMaxQueueLength();
                 break;
             }

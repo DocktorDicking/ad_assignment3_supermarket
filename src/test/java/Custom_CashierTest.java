@@ -54,15 +54,19 @@ class Custom_CashierTest {
 
     @Test
     void priorityQueueTest() {
+        //Add customers to queue
+        this.priorityCashier.add(this.customer9);
         this.priorityCashier.add(this.customer9);
         this.priorityCashier.add(this.customer1);
         this.priorityCashier.add(this.customer2);
         this.priorityCashier.add(this.customer9);
 
+        //Check if customers is in order
         LinkedList<Customer> queue = (LinkedList<Customer>) this.priorityCashier.getWaitingQueue();
         assertEquals(this.customer1, queue.get(0));
         assertEquals(this.customer2, queue.get(1));
         assertEquals(this.customer9, queue.get(2));
         assertEquals(this.customer9, queue.get(3));
+        assertEquals(this.customer9, queue.get(4));
     }
 }
