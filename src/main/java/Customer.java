@@ -16,9 +16,6 @@ public class Customer {
     private LocalTime queuedAt;      //time of arrival at cashier
     private String zipCode;          //zip-code of the customer
     private Set<Purchase> items;     //items procured by customer
-    private int actualWaitingTime;   //actual waiting time in seconds before check-out
-    private int actualCheckOutTime;  //actual check-out time at cashier in seconds
-    private Cashier checkOutCashier; //cashier that the customer has chosen for check-out
 
     public Customer(LocalTime queuedAt, String zipCode) {
         this.queuedAt = queuedAt;
@@ -87,30 +84,6 @@ public class Customer {
 
     public Set<Purchase> getItems() {
         return items;
-    }
-
-    public int getActualWaitingTime() {
-        return actualWaitingTime;
-    }
-
-    public int getActualCheckOutTime() {
-        return actualCheckOutTime;
-    }
-
-    public Cashier getCheckOutCashier() {
-        return checkOutCashier;
-    }
-
-    public void setCheckOutCashier(Cashier checkOutCashier) {
-        this.checkOutCashier = checkOutCashier;
-    }
-
-    public void setActualWaitingTime(int actualWaitingTime) {
-        this.actualWaitingTime = actualWaitingTime;
-    }
-
-    public void setActualCheckOutTime(int actualCheckOutTime) {
-        this.actualCheckOutTime = actualCheckOutTime;
     }
 
     /**

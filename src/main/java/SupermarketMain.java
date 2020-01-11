@@ -56,5 +56,30 @@ public class SupermarketMain {
         // simulate the configuration and print the result
         supermarket.simulateCashiers();
         supermarket.printSimulationResults();
+
+        /*
+        Config for custom scenario
+        2 FIFO cashiers
+         */
+        supermarket.getCashiers().clear();
+        supermarket.getCashiers().add(new FIFOCashier("FIFO-1"));
+        supermarket.getCashiers().add(new FIFOCashier("FIFO-2"));
+
+        // simulate the configuration and print the result
+        supermarket.simulateCashiers();
+        supermarket.printSimulationResults();
+
+        /*
+        Config for custom scenario
+        2 PRIO cashiers
+         */
+        supermarket.getCashiers().clear();
+        supermarket.getCashiers().add(new PriorityCashier("PRIO-1", 5));
+        supermarket.getCashiers().add(new PriorityCashier("PRIO-2", 5));
+
+
+        // simulate the configuration and print the result
+        supermarket.simulateCashiers();
+        supermarket.printSimulationResults();
     }
 }
