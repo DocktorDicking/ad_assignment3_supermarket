@@ -226,7 +226,7 @@ public class Supermarket {
     public void simulateCashiers() {
         // all cashiers restart at open time
         for (Cashier c : this.cashiers) {
-            c.reStart(this.openTime);
+            c.restart(this.openTime);
         }
 
         //Sort customer data on arrival time and create a queue of sorted customers

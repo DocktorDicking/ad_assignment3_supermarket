@@ -42,7 +42,7 @@ public abstract class Cashier {
      * with empty queues
      * @param currentTime LocalTime
      */
-    public void reStart(LocalTime currentTime) {
+    public void restart(LocalTime currentTime) {
         this.waitingQueue.clear();
         this.history.clear();
         this.currentTime = currentTime;
@@ -92,7 +92,7 @@ public abstract class Cashier {
      * @param customer Customer
      */
     public void add(Customer customer) {
-        //Let customers with less then 1 item skipp line completely.
+        //Let customers with less then 1 item skip line completely.
         if (customer.getNumberOfItems() > 0) {
             this.totalCustomers++;
             this.waitingQueue.add(customer);

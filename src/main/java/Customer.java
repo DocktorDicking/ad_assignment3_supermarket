@@ -61,15 +61,15 @@ public class Customer {
     public Cashier selectCashier(List<Cashier> cashiers) {
         Cashier selectedCashier = null;
         int selfCheckoutTime = 20 + (this.getNumberOfItems() * 2);
-        int passthroughTime = 0;
+        int currentWaitingTime = 0;
 
         if (cashiers.size() == 1) {
             selectedCashier = cashiers.get(0);
         } else if (cashiers.size() > 1) {
             for (Cashier cashier : cashiers) {
-                int expectedWaitingTime = selfCheckoutTime + cashier.expectedWaitingTime(this);
-                if (expectedWaitingTime < passthroughTime || passthroughTime == 0) {
-                    passthroughTime = expectedWaitingTime;
+                int newWaitingTime = selfCheckoutTime + cashier.expectedWaitingTime(this);
+                if (newWaitingTime < currentWaitingTime || currentWaitingTime == 0) {
+                    currentWaitingTime = newWaitingTime;
                     selectedCashier = cashier;
                 }
             }

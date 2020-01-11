@@ -60,13 +60,13 @@ class CashierTest {
 
     private void t052_reStartResetsTimeAndQueue(Cashier cashier) {
         if (cashier == null) return;
-        cashier.reStart(LocalTime.NOON);
+        cashier.restart(LocalTime.NOON);
         cashier.doTheWorkUntil(LocalTime.NOON.plusSeconds(25));
         assertThat(cashier.getCurrentTime(), is(LocalTime.NOON.plusSeconds(25)));
         assertThat(cashier.getTotalIdleTime(), is(25));
         cashier.add(this.customer1);
         assertThat(cashier.getWaitingQueue().size(), is(1));
-        cashier.reStart(LocalTime.NOON);
+        cashier.restart(LocalTime.NOON);
         assertThat(cashier.getWaitingQueue().size(), is(0));
         assertThat(cashier.getTotalIdleTime(), is(0));
     }
@@ -79,7 +79,7 @@ class CashierTest {
 
     private void t053_expectedCheckOutTimeFollowsCustomerAndCashierType(Cashier cashier, int c1, int c2) {
         if (cashier == null) return;
-        cashier.reStart(LocalTime.NOON);
+        cashier.restart(LocalTime.NOON);
         assertThat(cashier.expectedCheckOutTime(this.customer0.getNumberOfItems()), is(0));
         assertThat(cashier.expectedCheckOutTime(this.customer1.getNumberOfItems()), is(c1 + c2));
         assertThat(cashier.expectedCheckOutTime(this.customer2.getNumberOfItems()), is(c1 + 2 * c2));
@@ -94,7 +94,7 @@ class CashierTest {
 
     private void t054_expectedWaitingTimeFollowsQueueAndCurrentCustomer(Cashier cashier,
                          int firstWaitingTime, int secondWaitingTime, int thirdWaitingTime, int finalQueueSize) {
-        cashier.reStart(LocalTime.NOON);
+        cashier.restart(LocalTime.NOON);
         assertThat(cashier.expectedWaitingTime(this.customer9), is(0));
         cashier.add(this.customer9);
         assertThat(cashier.getWaitingQueue().size(), is(1));

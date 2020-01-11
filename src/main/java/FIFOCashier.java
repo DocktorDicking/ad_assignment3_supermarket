@@ -51,12 +51,15 @@ public class FIFOCashier extends Cashier {
     }
 
     /**
-     * Proceed the cahier's work until the given targetTime has been reached.
+     * Proceed the cashier's work until the given targetTime has been reached.
      *
      * Cashier work may involve:
      * - Continuing or finishing the current customer(s) being served
      * - Serving new customers that are waiting in the queue
-     * - Sitting idle, taking a break until time has reached targetTime
+     * - Sitting idle or taking a break until time has reached targetTime
+     *
+     * Basically, we first calculate how much time in seconds we have to spend between the local time and the new
+     * given time and look if we can spend those second helping customers.
      *
      * @param targetTime LocalTime
      */
@@ -66,9 +69,12 @@ public class FIFOCashier extends Cashier {
         this.totalAmountAtWork += elapsed;
 
         /*
-        Check if cashier works on a currentCustomer.
-        If elapsed time is smaller then totalCustomerTime, set time worked and currentTime to elapsed time, return.
-        If elapsed time is bigger then totalCustomerTime,
+        If current customer is set. Calculate the total time needed to help customer.
+        If the elapsed time is smaller then the total time needed to help the customer, add time to worked time and
+        set the current time to target time, return.
+
+        If elapsed time is greater then the total time needed to help te customer, help the customer and update
+        totalAmountOfWorkTime. Current customer is helped in this case.
          */
         if (this.currentCustomer != null) {
             int totalCustomerTime = FIXED_TIME + (TIME_PER_ITEM * this.currentCustomer.getNumberOfItems());
@@ -84,6 +90,11 @@ public class FIFOCashier extends Cashier {
             this.timeWorked = 0;
         }
 
+        /*
+        Check if there are more customers in line, if so, set the next customer in line to current customer.
+        Calculate the time needed to help the customer and check if elapsed time is bigger then the time needed to
+        help the customer. If this is the case, help the customer. Else register the needed data and return.
+         */
         while (this.waitingQueue.size() > 0) {
             Customer currentCustomer = this.waitingQueue.peek();
 
